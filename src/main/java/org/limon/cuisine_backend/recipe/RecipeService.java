@@ -28,6 +28,10 @@ public class RecipeService {
         return recipeRepository.save(recipe);
     }
 
+    public void updateRecipe(Recipe recipe) {
+        recipeRepository.save(recipe);
+    }
+
     public void deleteRecipeById(Long id) {
         recipeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
         recipeRepository.deleteById(id);
