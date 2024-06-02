@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,10 +35,7 @@ public class RecipeController {
 
     @PostMapping("/new")
     public ResponseEntity<?> addRecipe(@RequestBody Recipe recipe) {
-        Optional<Recipe> ifExists = recipeService.getRecipeByName(recipe.getName());
-        if (ifExists.isPresent()) return ResponseEntity.status(HttpStatus.CONFLICT).body("Recipe already exists");
-
-        if (recipe.getName().isEmpty() || recipe.getDescription().isEmpty() || recipe.getIngredients().isEmpty() || recipe.getDirections().isEmpty()) {
+        if (recipe.getCategory().isEmpty() || recipe.getName().isEmpty() || recipe.getDescription().isEmpty() || recipe.getIngredients().isEmpty() || recipe.getDirections().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Attributes can't be empty");
         } else {
             recipeService.createRecipe(recipe);
@@ -47,7 +45,7 @@ public class RecipeController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateRecipe(@PathVariable Long id, @RequestBody Recipe recipe) {
-        if (recipe.getName().isEmpty() || recipe.getDescription().isEmpty() || recipe.getIngredients().isEmpty() || recipe.getDirections().isEmpty()) {
+        if (recipe.getCategory().isEmpty() || recipe.getName().isEmpty() || recipe.getDescription().isEmpty() || recipe.getIngredients().isEmpty() || recipe.getDirections().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Attributes can't be empty");
         }
 
@@ -55,9 +53,11 @@ public class RecipeController {
             Recipe foundRecipe = recipeService.getRecipeById(id);
 
             foundRecipe.setName(recipe.getName());
+            foundRecipe.setCategory(recipe.getCategory());
             foundRecipe.setDescription(recipe.getDescription());
             foundRecipe.setIngredients(recipe.getIngredients());
             foundRecipe.setDirections(recipe.getDirections());
+            foundRecipe.setUpdatedAt(new Date());
 
             recipeService.updateRecipe(foundRecipe);
 
